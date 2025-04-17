@@ -39,6 +39,15 @@ RUN --mount=type=cache,target=/root/.ccache \
         && cmake --build --parallel --preset 'CPU' \
         && cmake --install build --component CPU --strip --parallel 8
 
+FROM base AS cuda-11
+ARG CUDA11VERSION=11.4
+RUN dnf install -y cuda-toolkit-${CUDA11VERSION//./-}
+ENV PATH=/usr/local/cuda-11/bin:$PATH
+RUN --mount=type=cache,target=/root/.ccache \
+    cmake --preset 'CUDA 11' \
+        && cmake --build --parallel --preset 'CUDA 11' \
+        && cmake --install build --component CUDA --strip --parallel 8
+
 FROM base AS cuda-12
 ARG CUDA12VERSION=12.8
 RUN dnf install -y cuda-toolkit-${CUDA12VERSION//./-}
